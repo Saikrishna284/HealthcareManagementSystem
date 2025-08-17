@@ -1,0 +1,11 @@
+.admin-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* Content area styles */
+  .content-wrapper {
+    margin-left: 16.66%; /* For medium screens (col-md-2) */
+    padding-top: 1.5rem;
+  }

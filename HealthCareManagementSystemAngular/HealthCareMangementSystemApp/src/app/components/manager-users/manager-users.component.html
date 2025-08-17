@@ -1,0 +1,133 @@
+<div class="admin-wrapper">
+  <app-sidebar-header></app-sidebar-header>
+  <div class="content-wrapper">
+      <div class="card mt-2 border-0 shadow-sm rounded-3">
+          <div class="card-header text-white d-flex justify-content-between align-items-center rounded-top-3" style="background-color: #0056b3;">
+            <h5 class="mb-0 fw-semibold">All Users</h5>
+            <div class="input-group input-group-sm" style="max-width: 250px;">
+              <span class="input-group-text bg-light">
+                <i class="bi bi-search text-muted"></i>
+              </span>
+              <input type="text" class="form-control" [(ngModel)]="searchText" placeholder="Filter Users">
+            </div>
+            <button class="btn btn-sm btn-light" (click)="resetForm()">
+              <i class="bi bi-plus me-1"></i> Add User
+            </button>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col" class="fw-semibold">ID</th>
+                    <th scope="col" class="fw-semibold">User Name</th>
+                    <th scope="col" class="fw-semibold">Email</th>
+                    <th scope="col" class="fw-semibold">Role</th>
+                    <th scope="col" class="fw-semibold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let user of Users | filter: searchText | paginate: { itemsPerPage: 10, currentPage: page }; trackBy: trackByUserId">
+                    <td class="text-nowrap">  {{ user.id }}</td>
+                      <td class="text-nowrap">{{ user.userName }}</td>
+                      <td class="text-nowrap">{{ user.email }}</td>
+                      <td class="text-nowrap">{{ user.roles[0] }}</td>
+                      <td class="text-nowrap">
+                        <button class="btn btn-sm btn-outline-primary me-1"
+                                (click)="editUser(user)">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger"
+                                (click)="deleteUser(user.id)">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr *ngIf="Users?.length === 0">
+                      <td colspan="5" class="text-center py-3 text-muted">No users available</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="d-flex justify-content-center mt-1">
+              <pagination-controls (pageChange)="page = $event" class="pagination-sm"></pagination-controls>
+            </div>
+          </div>
+  
+          <!-- User Modal -->
+          <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content rounded-3 shadow-sm">
+                <div class="modal-header text-white" style="background-color: #0056b3;">
+                  <h5 class="modal-title fw-semibold" id="userModalLabel">{{ isEdit ? 'Edit User' : 'Add User' }}</h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form #userForm="ngForm" (ngSubmit)="saveUser(userForm)">
+                    <div class="mb-2">
+                      <label for="username" class="form-label">Username</label>
+                      <input type="text" class="form-control" id="username" name="username"
+                             [(ngModel)]="currentUser.username" required #username="ngModel"
+                             [ngClass]="{'is-invalid': username.invalid && (username.dirty || username.touched)}">
+                      <div *ngIf="username.invalid && (username.dirty || username.touched)" class="invalid-feedback">
+                        Username is required
+                      </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                      <label for="email" class="form-label">Email</label>
+                      <input type="email" class="form-control" id="email" name="email"
+                             [(ngModel)]="currentUser.email" required email #email="ngModel"
+                             [ngClass]="{'is-invalid': email.invalid && (email.dirty || email.touched)}">
+                      <div *ngIf="email.invalid && (email.dirty || email.touched)" class="invalid-feedback">
+                        <span *ngIf="email.errors?.['required']">Email is required</span>
+                        <span *ngIf="email.errors?.['email']">Please enter a valid email</span>
+                      </div>
+                    </div>
+                    
+                    <div class="mb-2" *ngIf="!isEdit">
+                      <label for="password" class="form-label">Password</label>
+                      <input type="password" class="form-control" id="password" name="password"
+                             [(ngModel)]="currentUser.password" required minlength="6" #password="ngModel"
+                             [ngClass]="{'is-invalid': password.invalid && (password.dirty || password.touched)}">
+                      <div *ngIf="password.invalid && (password.dirty || password.touched)" class="invalid-feedback">
+                        <span *ngIf="password.errors?.['required']">Password is required</span>
+                        <span *ngIf="password.errors?.['minlength']">Password must be at least 6 characters</span>
+                      </div>
+                    </div>
+                    
+                    <div class="mb-2" *ngIf="!isEdit">
+                      <label for="role" class="form-label">Role</label>
+                      <select class="form-select" id="role" name="role"
+                              [(ngModel)]="currentUser.role" required #role="ngModel"
+                              [ngClass]="{'is-invalid': role.invalid && (role.dirty || role.touched)}">
+                        <option value="" disabled selected>Select a role</option>
+                        <option value="admin">Admin</option>
+                        <option value="doctor">Doctor</option>
+                        <option value="nurse">Nurse</option>
+                        <option value="staff">Staff</option>
+                      </select>
+                      <div *ngIf="role.invalid && (role.dirty || role.touched)" class="invalid-feedback">
+                        Role selection is required.
+                      </div>
+                    </div>
+
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid">
+                        {{ isEdit ? 'Update User' : 'Add User' }}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div> 
+        </div> 
+    </div> 
+
+
+
+
+

@@ -1,0 +1,68 @@
+<!-- admin-dashboard.component.html -->
+<div class="admin-wrapper">
+    <app-sidebar-header></app-sidebar-header>
+    <div class="content-wrapper">
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2" style="color: #0056b3;">Dashboard</h1>
+        </div>
+  
+        <!-- Dashboard Content -->
+        <div class="row">
+          <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                      Total Users</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ usersCount }}</div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="bi bi-people fs-2 text-primary"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                      Patients</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ patientsCount }}</div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="bi bi-person-standing fs-2 text-warning"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h5 class="mb-2 fw-semibold" style="color: #0056b3;">All Patients</h5>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Patient Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Phone</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let patient of patients">
+              <th scope="row">{{ patient.patientId}}</th>
+              <td>{{ patient.name}}</td>
+              <td>{{ patient.email}}</td>
+              <td>{{ patient.phone}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </main>
+    </div>
+  </div>
