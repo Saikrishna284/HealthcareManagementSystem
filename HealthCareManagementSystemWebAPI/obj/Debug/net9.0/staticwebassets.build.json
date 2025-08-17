@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "ZbP9KzzvZyhu41zlF+LT2Mq2+q2/WuM1CSGyGRUWiOs=",
+  "Source": "HealthCareManagementSystemWebAPI",
+  "BasePath": "_content/HealthCareManagementSystemWebAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

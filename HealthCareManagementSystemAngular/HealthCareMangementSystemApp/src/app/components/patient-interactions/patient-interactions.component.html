@@ -1,0 +1,52 @@
+<div class="admin-wrapper">
+    <app-sidebar-header></app-sidebar-header>
+        <div class="content-wrapper">
+            <div>
+              <div class="container mt-5">
+                <div class="card shadow-sm">
+                  <div class="card-header text-white" style="background-color: #0056b3;">
+                    <h4 class="mb-0">Patient Details</h4>
+                  </div>
+                  <div class="card-body">
+                    <div class="row mb-3">
+                      <div class="col-md-6">
+                        <h5>Personal Information</h5>
+                        <p><strong>ID:</strong> {{ patient?.patientId }}</p>
+                        <p><strong>Name:</strong> {{ patient?.name }}</p>
+                        <p><strong>Email:</strong> {{ patient?.email }}</p>
+                        <p><strong>Phone:</strong> {{ patient?.phone }}</p>
+                      </div>
+                    </div>
+        
+                    <hr />
+        
+                    <h5 class="d-flex justify-content-between align-items-center">
+                      Interactions
+                      <button *ngIf="userRole === 'ADMIN' || userRole === 'DOCTOR'" class="btn btn-success btn-sm" (click)="toggleAddInteraction('add')">
+                        Add Interaction
+                      </button>
+                    </h5>
+        
+                    <div *ngIf="showAddInteraction">
+                      <input type="text" [(ngModel)]="newInteraction" class="form-control mb-2" placeholder="Enter interaction" />
+                      <button class="btn btn-primary" (click)="saveForm()">{{ isEdit ? 'Update' : 'Add' }}</button>
+                    </div>
+        
+                    <ul class="list-group mb-3">
+                      <li *ngFor="let interaction of interactions" class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ interaction.description }}
+                        <button  *ngIf="userRole === 'ADMIN' || userRole === 'DOCTOR'" class="btn btn-warning btn-sm" (click)="initiateEdit(interaction)">Update</button>
+                      </li>
+                      <li *ngIf="interactions.length === 0" class="list-group-item">
+                        No interactions
+                      </li>
+                    </ul>
+        
+                    <button class="btn btn-primary" (click)="goBack()">Back to Patients List</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        

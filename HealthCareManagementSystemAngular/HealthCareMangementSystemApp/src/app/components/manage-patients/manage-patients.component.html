@@ -1,0 +1,118 @@
+<div class="admin-wrapper">
+  <app-sidebar-header></app-sidebar-header>
+  <div class="content-wrapper">
+      <div class="card mt-2 border-0 shadow-sm rounded-3">
+          <div class="card-header text-white d-flex justify-content-between align-items-center rounded-top-3" style="background-color: #0056b3;">
+            <h5 class="mb-0 fw-semibold">All Patients</h5>
+            <div class="input-group input-group-sm" style="max-width: 250px;">
+              <span class="input-group-text bg-light">
+                <i class="bi bi-search text-muted"></i>
+              </span>
+              <input type="text" class="form-control" [(ngModel)]="searchText" placeholder="Filter Users">
+            </div>
+            <button  *ngIf="userRole === 'ADMIN'" class="btn btn-sm btn-light" (click)="resetForm()">
+              <i class="bi bi-plus me-1"></i> Add Patient
+            </button>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col" class="fw-semibold">ID</th>
+                    <th scope="col" class="fw-semibold">Patient Name</th>
+                    <th scope="col" class="fw-semibold">Email</th>
+                    <th scope="col" class="fw-semibold">Phone</th>
+                    <th *ngIf="userRole === 'ADMIN' || userRole === 'DOCTOR'" scope="col" class="fw-semibold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                  <tr *ngFor="let patient of Patients | filter: searchText |  paginate: { itemsPerPage: 10, currentPage: page }; trackBy: trackByUserId" (click)="patientDetails(patient.patientId)" style="cursor: pointer;">
+                    <td class="text-nowrap">{{ patient.patientId }}</td>
+                    <td class="text-nowrap">{{ patient.name }}</td>
+                    <td class="text-nowrap">{{ patient.email }}</td>
+                    <td class="text-nowrap">{{ patient.phone }}</td>
+                    <td class="text-nowrap">
+                      <button *ngIf="userRole === 'ADMIN' || userRole === 'DOCTOR'" class="btn btn-sm btn-outline-primary me-3"
+                              (click)="editPatient(patient);$event.stopPropagation();">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button  *ngIf="userRole === 'ADMIN'" class="btn btn-sm btn-outline-danger me-3"
+                              (click)="deletePatient(patient.patientId);$event.stopPropagation();">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                      <button  *ngIf="userRole === 'ADMIN'" class="btn btn-sm btn-outline-danger"
+                              (click)="patientPdf(patient);$event.stopPropagation();">
+                        <i class="bi bi-filetype-pdf"></i>
+                      </button>
+                    </td>
+                  </tr>
+              
+                  <tr *ngIf="Patients?.length === 0">
+                    <td colspan="5" class="text-center py-3 text-muted">No patients available</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center mt-1">
+            <pagination-controls (pageChange)="page = $event" class="pagination-sm"></pagination-controls>
+          </div>
+        </div>
+    
+        <!-- Patient Modal -->
+        <div class="modal fade" id="patientModal" tabindex="-1" role="dialog" aria-labelledby="patientModalLabel">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-3 shadow-sm">
+              <div class="modal-header text-white" style="background-color: #0056b3;">
+                <h5 class="modal-title fw-semibold" id="patientModalLabel">{{ isEdit ? 'Edit Patient' : 'Add Patient' }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form #patientForm="ngForm" (ngSubmit)="savePatient(patientForm)">
+                  <div class="mb-2">
+                    <label for="name" class="form-label">Patient Name</label>
+                    <input type="text" class="form-control" id="name" name="name"
+                           [(ngModel)]="currentPatient.name" required #name="ngModel"
+                           [ngClass]="{'is-invalid': name.invalid && (name.dirty || name.touched)}">
+                    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="invalid-feedback">
+                      Patient name is required
+                    </div>
+                  </div>
+                  
+                  <div class="mb-2">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email"
+                           [(ngModel)]="currentPatient.email" required email #email="ngModel"
+                           [ngClass]="{'is-invalid': email.invalid && (email.dirty || email.touched)}">
+                    <div *ngIf="email.invalid && (email.dirty || email.touched)" class="invalid-feedback">
+                      <span *ngIf="email.errors?.['required']">Email is required</span>
+                      <span *ngIf="email.errors?.['email']">Please enter a valid email</span>
+                    </div>
+                  </div>
+                  
+                  <div class="mb-2">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="phone" name="phone"
+                           [(ngModel)]="currentPatient.phone" required pattern="[0-9]+" #phone="ngModel"
+                           [ngClass]="{'is-invalid': phone.invalid && (phone.dirty || phone.touched)}">
+                    <div *ngIf="phone.invalid && (phone.dirty || phone.touched)" class="invalid-feedback">
+                      <span *ngIf="phone.errors?.['required']">Phone number is required</span>
+                      <span *ngIf="phone.errors?.['pattern']">Please enter numbers only</span>
+                    </div>
+                  </div>
+                  
+                  <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-sm btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-primary" [disabled]="patientForm.invalid">
+                      {{ isEdit ? 'Update' : 'Save' }}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div> 
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<!-- sidebar-header.component.html -->
+<nav class="navbar navbar-expand-lg navbar-darkshadow-sm" style="background-color: #0056b3;">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white" routerLink="admin">
+        Prime Hospital
+      </a>
+      <div class="d-flex">
+        <a class="nav-link active text-white me-4" routerLink="#">
+          <i class="bi bi-person-circle me-1"></i> {{ userRole }}
+        </a>
+        <a class="nav-link active text-white me-2" (click)="logout()">
+          <i class="bi bi-box-arrow-right me-2"></i>Logout
+        </a>
+      </div>
+    </div>
+  </nav>
+  
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-md-3 col-lg-2 p-0 sidebar-wrapper">
+        <div class="sidebar bg-white">
+          <div class="d-flex flex-column flex-shrink-0 p-3 h-100">
+            <ul class="nav nav-pills flex-column mb-auto">
+              <li class="nav-item">
+                <a routerLink="/admin" routerLinkActive="active" class="nav-link" [hidden]="!access">
+                  <i class="bi bi-house-door me-2"></i> Dashboard
+                </a>
+              </li>
+              <li>
+                <a routerLink="/manage-users" routerLinkActive="active" class="nav-link" [hidden]="!access">
+                  <i class="bi bi-people me-2"></i> Users
+                </a>
+              </li>
+              <li>
+                <a routerLink="/manage-patients" routerLinkActive="active" class="nav-link">
+                  <i class="bi bi-person-standing me-2"></i> Patients
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
